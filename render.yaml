@@ -2,10 +2,8 @@
 # Blueprint configuration for the "comparador-precios-app"
 
 services:
-  # Este es un servicio temporal solo para inicializar el Blueprint.
-  # Lo eliminaremos y reemplazaremos con nuestros scrapers más adelante.
-  - type: web
-    name: initial-setup
-    env: static
-    plan: free # Importante para no generar costos
-    staticPublishPath: .
+  # Este es un placeholder de tipo "Sitio Estático" para inicializar el Blueprint.
+  # El plan 'starter' es el nivel gratuito actual de Render para este servicio.
+  - type: static_site
+    name: initial-setup-placeholder
+    plan: starter
