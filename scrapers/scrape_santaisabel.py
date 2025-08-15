@@ -37,11 +37,11 @@ async def main():
         print(f" navegando a: {TARGET_URL}")
         try:
             # Aumentamos el timeout general a 90 segundos
-            await page.goto(TARGET_URL, wait_until="networkidle", timeout=90000)
+            await page.goto(TARGET_URL, wait_until="networkidle", timeout=190000)
             print("✅ Página cargada correctamente.")
             
             # Aumentamos el timeout para esperar el selector a 90 segundos
-            await page.wait_for_selector(PRODUCT_CARD_SELECTOR, timeout=90000)
+            await page.wait_for_selector(PRODUCT_CARD_SELECTOR, timeout=190000)
             print("📦 Productos encontrados en la página.")
 
         except TimeoutError:
