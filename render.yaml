@@ -1,11 +1,13 @@
 # render.yaml
-# Blueprint configuration following the official Render spec.
+# Blueprint configuration corrected based on the official Render specification.
 
 services:
   # Define a static web service placeholder.
-  # This is the modern way to define a static site on Render.
+  # 'runtime: static' is the correct directive.
+  # 'plan: starter' is the official name for the free web service tier.
   - type: web
     name: initial-setup-placeholder
-    env: static
-    plan: Free # The official name for the free tier on web services.
-    staticPublishPath: . # Serve content from the root directory.
+    runtime: static
+    plan: starter
+    staticPublishPath: . # We have no build output, so serve from the root.
+    # A buildCommand is not needed as we are not building anything.
