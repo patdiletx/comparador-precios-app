@@ -18,39 +18,46 @@ PRODUCT_CARD_SELECTOR = ".product-card-wrap"
 PRODUCT_NAME_SELECTOR = "p.product-card-name"
 PRODUCT_PRICE_SELECTOR = "span.prices-main-price"
 
-# --- Parámetros Anti-Bloqueo ---
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+# --- Parámetros Anti-Bloqueo Avanzados ---
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
 VIEWPORT = {"width": 1920, "height": 1080}
 
 
 async def main():
     """
-    Función principal que orquesta el proceso de scraping con técnicas anti-bloqueo.
+    Función principal que orquesta el proceso de scraping con técnicas de evasión avanzadas.
     """
-    print("🚀 Iniciando scraper para Santa Isabel (Modo Evasión)...")
+    print("🚀 Iniciando scraper para Santa Isabel (Modo Evasión Final)...")
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+        # Usamos Firefox para cambiar la huella digital del navegador
+        browser = await p.firefox.launch(headless=True)
         context = await browser.new_context(
             user_agent=USER_AGENT,
-            viewport=VIEWPORT
+            viewport=VIEWPORT,
+            java_script_enabled=True, # Aseguramos que JS esté habilitado
         )
         page = await context.new_page()
         
         print(f" navegando a: {TARGET_URL}")
         try:
-            # Usamos 'load' que es más similar a como un usuario espera que la página cargue.
-            await page.goto(TARGET_URL, wait_until="load", timeout=90000)
-            print("✅ Página cargada correctamente.")
+            await page.goto(TARGET_URL, wait_until="domcontentloaded", timeout=90000)
+            print("✅ Página cargada. Esperando a que se asiente...")
             
-            # Esperamos un poco más después de cargar, simulando un usuario que mira la página.
-            await page.wait_for_timeout(5000) 
+            # Esperamos un tiempo prudencial para que se ejecuten los scripts anti-bots
+            await page.wait_for_timeout(10000) 
             
+            print("... simulando scroll para cargar productos...")
+            # Simulamos un scroll hacia abajo, una acción muy humana que carga contenido "lazy"
+            await page.evaluate("window.scrollBy(0, document.body.scrollHeight)")
+            await page.wait_for_timeout(5000)
+
+            print("... esperando selector de productos...")
             await page.wait_for_selector(PRODUCT_CARD_SELECTOR, timeout=60000)
             print("📦 Productos encontrados en la página.")
 
         except TimeoutError:
-            print("❌ Error: Timeout esperando que la página o los productos cargaran.")
+            print("❌ Error: Timeout final esperando los productos. El bloqueo es persistente.")
             screenshot_path = "debug_screenshot.png"
             await page.screenshot(path=screenshot_path, full_page=True)
             print(f"📸 Screenshot '{screenshot_path}' guardado para depuración.")
