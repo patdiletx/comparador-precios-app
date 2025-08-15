@@ -1,26 +1,19 @@
 # render.yaml
-# Configuración corregida según la especificación oficial de Render.
+# Configuración actualizada para usar Docker.
 
 services:
-  # Definimos un servicio de tipo "Cron Job"
   - type: cron
     name: santa-isabel-scraper
-    runtime: python
-    # NOTA: Se elimina 'pythonVersion'. Render usará Python 3.11 por defecto.
-    
-    # Horario en formato UTC. '0 8 * * *' significa "todos los días a las 8:00 AM UTC"
+    runtime: docker # <-- ¡Cambiamos a Docker!
+    plan: free
     schedule: "0 8 * * *"
-    plan: starter
     
-    # Directorio raíz para los comandos
-    rootDir: ./scrapers
+    # Configuración de Docker
+    dockerfilePath: ./scrapers/Dockerfile # Ruta a nuestro Dockerfile
+    dockerContext: ./scrapers # Carpeta donde se ejecuta la construcción
     
-    # Comandos para preparar el entorno
-    buildCommand: "pip install -r requirements.txt && playwright install --with-deps"
-    
-    # El comando que se ejecutará según el horario
+    # El comando se ejecuta dentro del contenedor ya construido
     startCommand: "python scrape_santaisabel.py"
     
-    # Vinculamos las credenciales de Supabase de la forma correcta
     envVars:
       - fromGroup: supabase-credentials
