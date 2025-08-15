@@ -1,18 +1,18 @@
 # render.yaml
-# Configuración para desplegar nuestro scraper como un Cron Job.
+# Configuración corregida según la especificación oficial de Render.
 
 services:
   # Definimos un servicio de tipo "Cron Job"
   - type: cron
     name: santa-isabel-scraper
     runtime: python
-    pythonVersion: "3.11"
-    # Horario en formato UTC. '0 8 * * *' significa "todos los días a las 8:00 AM UTC"
-    # (4:00 AM en Chile continental).
-    schedule: "0 8 * * *"
-    plan: free # Usamos el plan gratuito para Cron Jobs
+    # NOTA: Se elimina 'pythonVersion'. Render usará Python 3.11 por defecto.
     
-    # Le decimos a Render que todos los comandos se ejecutan desde la carpeta 'scrapers'
+    # Horario en formato UTC. '0 8 * * *' significa "todos los días a las 8:00 AM UTC"
+    schedule: "0 8 * * *"
+    plan: free
+    
+    # Directorio raíz para los comandos
     rootDir: ./scrapers
     
     # Comandos para preparar el entorno
@@ -21,6 +21,6 @@ services:
     # El comando que se ejecutará según el horario
     startCommand: "python scrape_santaisabel.py"
     
-    # Vinculamos las credenciales de Supabase que guardamos antes
-    envVarGroups:
-      - name: supabase-credentials
+    # Vinculamos las credenciales de Supabase de la forma correcta
+    envVars:
+      - fromGroup: supabase-credentials
