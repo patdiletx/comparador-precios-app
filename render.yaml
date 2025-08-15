@@ -6,6 +6,7 @@ services:
   - type: cron
     name: santa-isabel-scraper
     runtime: python
+    pythonVersion: "3.11" # <-- ¡LÍNEA AÑADIDA! Especificamos la versión de Python.
     # Horario en formato UTC. '0 8 * * *' significa "todos los días a las 8:00 AM UTC"
     # (4:00 AM en Chile continental).
     schedule: "0 8 * * *"
