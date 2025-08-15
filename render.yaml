@@ -1,9 +1,11 @@
 # render.yaml
-# Blueprint configuration for the "comparador-precios-app"
+# Blueprint configuration following the official Render spec.
 
 services:
-  # Este es un placeholder de tipo "Sitio Estático" para inicializar el Blueprint.
-  # El plan 'starter' es el nivel gratuito actual de Render para este servicio.
-  - type: static_site
+  # Define a static web service placeholder.
+  # This is the modern way to define a static site on Render.
+  - type: web
     name: initial-setup-placeholder
-    plan: starter
+    env: static
+    plan: Free # The official name for the free tier on web services.
+    staticPublishPath: . # Serve content from the root directory.
