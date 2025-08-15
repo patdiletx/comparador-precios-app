@@ -22,6 +22,12 @@ PRODUCT_PRICE_SELECTOR = "span.prices-main-price"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
 VIEWPORT = {"width": 1920, "height": 1080}
 
+# --- CONFIGURACIÓN DE PROXY ---
+# Obtén estas credenciales de tu proveedor de proxy y añádelas a los Secrets de GitHub
+PROXY_SERVER = os.getenv("PROXY_SERVER") 
+PROXY_PORT = os.getenv("PROXY_PORT")     
+PROXY_USER = os.getenv("PROXY_USER")
+PROXY_PASS = os.getenv("PROXY_PASS")
 
 async def main():
     """
@@ -29,13 +35,24 @@ async def main():
     """
     print("🚀 Iniciando scraper para Santa Isabel (Modo Evasión Final)...")
 
+    proxy_settings = None
+    if PROXY_SERVER and PROXY_PORT and PROXY_USER and PROXY_PASS:
+        print("... usando configuración de proxy.")
+        proxy_settings = {
+            "server": f"http://{PROXY_SERVER}:{PROXY_PORT}",
+            "username": PROXY_USER,
+            "password": PROXY_PASS
+        }
+
     async with async_playwright() as p:
-        # Usamos Firefox para cambiar la huella digital del navegador
-        browser = await p.firefox.launch(headless=True)
+        browser = await p.firefox.launch(
+            headless=True,
+            proxy=proxy_settings # <-- ¡AQUÍ SE APLICA EL PROXY!
+        )
         context = await browser.new_context(
             user_agent=USER_AGENT,
             viewport=VIEWPORT,
-            java_script_enabled=True, # Aseguramos que JS esté habilitado
+            java_script_enabled=True,
         )
         page = await context.new_page()
         
@@ -44,11 +61,9 @@ async def main():
             await page.goto(TARGET_URL, wait_until="domcontentloaded", timeout=90000)
             print("✅ Página cargada. Esperando a que se asiente...")
             
-            # Esperamos un tiempo prudencial para que se ejecuten los scripts anti-bots
             await page.wait_for_timeout(10000) 
             
             print("... simulando scroll para cargar productos...")
-            # Simulamos un scroll hacia abajo, una acción muy humana que carga contenido "lazy"
             await page.evaluate("window.scrollBy(0, document.body.scrollHeight)")
             await page.wait_for_timeout(5000)
 
